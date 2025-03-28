@@ -1,6 +1,8 @@
 import User from "../models/user.model.js";
 import { StatusCodes } from "http-status-codes";
 import CustomError from "../errors/index.js";
+import createTokenUser from "../utils/createTokenUser.js";
+
 import {
   createJWT,
   isTokenValid,
@@ -20,7 +22,7 @@ const register = async (req, res) => {
   const role = isFirstUser ? "admin" : "user";
 
   const user = await User.create({ name, email, password, role });
-  const tokenUser = { name: user.name, id: user._id, role: user.role };
+  const tokenUser = createTokenUser(user);
 
   attachCookieToResponse(res, tokenUser);
 
@@ -44,7 +46,7 @@ const login = async (req, res) => {
       "Please provide valid email and password"
     );
   }
-  const tokenUser = { name: user.name, id: user._id, role: user.role };
+  const tokenUser = createTokenUser(user);
   attachCookieToResponse(res, tokenUser);
   res.status(StatusCodes.OK).json({ user });
 };

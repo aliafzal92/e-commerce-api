@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import { StatusCodes } from "http-status-codes";
 import CustomError from "../errors/index.js";
 import { attachCookieToResponse } from "../utils/jwt.js";
+import createTokenUser from "../utils/createTokenUser.js";
 
 const getAllUsers = async (req, res) => {
   const users = await User.find({ role: "user" }).select("-password");
