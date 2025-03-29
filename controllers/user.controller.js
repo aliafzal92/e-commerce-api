@@ -22,7 +22,20 @@ const showCurrentUser = async (req, res) => {
   res.status(StatusCodes.OK).json({ user });
 };
 const updateUser = async (req, res) => {
-  res.send("Update user");
+  const { name, email } = req.body;
+  if(!name || !email) {
+    throw new CustomError.BadRequestError("Please provide name and email");
+  }
+  const user = await User.findOne({ _id: req.user.userId });
+  if (!user) {
+    throw new CustomError.UnauthenticatedError("Authentication invalid");
+  }
+  user.name = name;
+  user.email = email;
+  await user.save();
+  const tokenUser = createTokenUser(user);
+  attachCookieToResponse(res, tokenUser);
+  res.status(StatusCodes.OK).json({ msg: "User updated!" , user: tokenUser });
 };
 const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
