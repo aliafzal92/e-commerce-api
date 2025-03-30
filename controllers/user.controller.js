@@ -3,6 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import CustomError from "../errors/index.js";
 import { attachCookieToResponse } from "../utils/jwt.js";
 import createTokenUser from "../utils/createTokenUser.js";
+import checkPermissions from "../utils/checkPermissions.js";
 
 const getAllUsers = async (req, res) => {
   const users = await User.find({ role: "user" }).select("-password");
@@ -14,12 +15,13 @@ const getSingleUser = async (req, res) => {
   if (!user) {
     throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
   }
+  checkPermissions(req.user, user._id);
   res.status(StatusCodes.OK).json({ user });
 };
 
 const showCurrentUser = async (req, res) => {
-  const user = req.user;
-  res.status(StatusCodes.OK).json({ user });
+  const currentUser = req.user;
+  res.status(StatusCodes.OK).json({ currentUser });
 };
 const updateUser = async (req, res) => {
   const { name, email } = req.body;

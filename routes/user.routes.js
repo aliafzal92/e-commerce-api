@@ -19,6 +19,6 @@ router.get("/showMe", authenticateUser, showCurrentUser);
 router.post("/updateUser", authenticateUser, updateUser);
 router.post("/updateUserPassword", authenticateUser, updateUserPassword);
 
-router.get("/:id", getSingleUser);
+router.get("/:id",authenticateUser, getSingleUser);
 
 export default router;
