@@ -1,33 +1,51 @@
 // Environment and async error handling
 import "dotenv/config";
 import "express-async-errors";
-import cookieParser from "cookie-parser";
+
+// Core modules
+import path from "path";
+import { fileURLToPath } from "url";
 
 // Express and middleware
 import express from "express";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 
 // Database connection
 import connectDB from "./db/connect.js";
 
-// Routes
+// Routers
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
-
+import productRouter from "./routes/product.routes.js";
+import reviewRouter from "./routes/review.routes.js";
+ 
 // Custom middlewares
 import notFoundMiddleware from "./middlewares/not-found.js";
 import errorHandlerMiddleware from "./middlewares/error-handler.js";
-
+ 
 const app = express();
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+console.log(path.join(__dirname));
+
+
+// Middleware setup
 app.use(morgan("tiny"));
 app.use(express.json());
 app.use(cookieParser(process.env.JWT_SECRET));
+app.use(express.static(path.join(__dirname, "./public")));
+app.use(fileUpload());
+
 app.get("/", (req, res) => {
   res.send("Welcome to the API");
 });
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/products", productRouter);
+app.use("/api/v1/reviews", reviewRouter);
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);

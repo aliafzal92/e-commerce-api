@@ -9,8 +9,7 @@ const CustomError = {
   CustomAPIError,
   NotFoundError,
   UnauthenticatedError,
-    UnauthorizedError,
+  UnauthorizedError,
 };
 
 export default CustomError;
-
